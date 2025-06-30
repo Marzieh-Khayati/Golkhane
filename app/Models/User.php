@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\DoctorProfile;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -18,9 +20,15 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'phone',
+        'user_type',
+        'first_name',
+        'last_name',
+        'is_active',
+        'profile_picture',
     ];
 
     /**
@@ -45,4 +53,17 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+     public function doctor_profile():HasOne
+    {
+        return $this->hasOne(DoctorProfile::class);
+    }  
+
+    public function getProfileUrl()
+{
+    if ($this->profile_picture) {
+        return asset("{$this->profile_picture}");
+    }
+    return asset('images/avatars/default.jpg');
+}
 }
