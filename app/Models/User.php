@@ -60,10 +60,15 @@ class User extends Authenticatable
     }  
 
     public function getProfileUrl()
-{
-    if ($this->profile_picture) {
-        return asset("{$this->profile_picture}");
+    {
+        if ($this->profile_picture) {
+            return asset("{$this->profile_picture}");
+        }
+        return asset('images/avatars/default.jpg');
     }
-    return asset('images/avatars/default.jpg');
-}
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }   
 }

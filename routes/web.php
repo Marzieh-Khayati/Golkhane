@@ -3,6 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ChatController;
 use App\Models\User;
 
 Route::get('/', function () {
@@ -30,5 +33,20 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/doctors/{id}', [UserController::class, 'show_doctor'])->name('doctors.show');
+
+// این Routeها فقط برای کاربران لاگین‌شده قابل دسترسی هستند
+Route::middleware('auth')->group(function () {
+    // نمایش صفحه پرداخت
+    Route::get('/doctors/{doctor}/payment', [PaymentController::class, 'showPaymentPage'])->name('doctor.payment');
+    // پردازش پرداخت
+    Route::post('/doctors/{doctor}/process-payment', [PaymentController::class, 'processPayment'])->name('doctor.process-payment');
+    // صفحه چت پس از پرداخت
+    Route::get('/doctors/{doctor}/chat', [ChatController::class, 'showChat'])->name('doctor.chat');
+});
+
+// Route برای بررسی لاگین بودن کاربر (از طریق Ajax)
+Route::post('/doctors/{doctor}/check-auth', [AuthController::class, 'checkAuth'])->name('doctor.check-auth');
+
+
 
 require __DIR__.'/auth.php';
