@@ -24,9 +24,4 @@ class DoctorProfile extends Model
     {
         return $this->belongsTo(User::class);
     }  
-
-    public function session():HasMany
-    { 
-        return $this->hasMany(ConsultationSession::class);
-    }
 }

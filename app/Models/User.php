@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\DoctorProfile;
+use App\Models\ConsultationSession;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
@@ -71,4 +72,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class);
     }   
+
+    public function session():HasMany
+    { 
+        return $this->hasMany(ConsultationSession::class);
+    }
 }

@@ -47,6 +47,12 @@ Route::middleware('auth')->group(function () {
 // Route برای بررسی لاگین بودن کاربر (از طریق Ajax)
 Route::post('/doctors/{doctor}/check-auth', [AuthController::class, 'checkAuth'])->name('doctor.check-auth');
 
+// در routes/web.php
+Route::middleware('auth')->group(function () {
+    Route::post('/sessions/{session}/end', [ChatController::class, 'endSession'])
+         ->name('session.end');
+});
 
+Route::middleware(['auth'])->post('/api/send-message', [ChatController::class, 'sendMessage']);
 
 require __DIR__.'/auth.php';
