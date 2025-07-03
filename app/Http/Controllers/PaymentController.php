@@ -42,7 +42,7 @@ class PaymentController extends Controller
 
         // انجام تراکنش
         try {
-            \DB::transaction(function () use ($user, $doctor) {
+            $session =\DB::transaction(function () use ($user, $doctor) {
                 // کسر از کیف پول کاربر
                 $user->decrement('credit', $doctor->doctor_profile->consultation_fee);
                 
@@ -59,7 +59,7 @@ class PaymentController extends Controller
 
                 $nowJalali = Jalalian::now();
                 $formattedDate = $nowJalali->format('Y-m-d H:i:s');
-                ConsultationSession::create([ 
+                return ConsultationSession::create([ 
                     'customer_id'=> $user->id,
                     'doctor_id' => $doctor->id,
                     'start_time'=> $formattedDate,
@@ -70,7 +70,7 @@ class PaymentController extends Controller
                 ]);
             });
             
-            return redirect()->route('doctor.chat', $doctor->id)
+            return redirect()->route('doctor.chat', $session->id)
                              ->with('success', 'پرداخت با موفقیت انجام شد!');
             
         } catch (\Exception $e) {

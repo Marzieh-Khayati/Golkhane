@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ChatController;
+use App\Models\ConsultationSession;
 use App\Models\User;
 
 Route::get('/', function () {
@@ -41,7 +42,7 @@ Route::middleware('auth')->group(function () {
     // پردازش پرداخت
     Route::post('/doctors/{doctor}/process-payment', [PaymentController::class, 'processPayment'])->name('doctor.process-payment');
     // صفحه چت پس از پرداخت
-    Route::get('/doctors/{doctor}/chat', [ChatController::class, 'showChat'])->name('doctor.chat');
+    Route::get('/doctors/{session}/chat', [ChatController::class, 'showChat'])->name('doctor.chat');
 });
 
 // Route برای بررسی لاگین بودن کاربر (از طریق Ajax)
@@ -54,5 +55,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->post('/api/send-message', [ChatController::class, 'sendMessage']);
+
+Route::get('/test-route', function() {
+    return 'Test Route Works!';
+});
 
 require __DIR__.'/auth.php';
