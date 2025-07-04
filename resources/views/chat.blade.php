@@ -163,54 +163,55 @@ document.getElementById('end-session-btn')?.addEventListener('click', async func
 
 <!-- اسکریپت های جاوااسکریپت برای ارسال پیام -->
 <script>
-document.getElementById('chat-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const form = e.target;
-    const input = form.querySelector('input[name="message"]');
-    const message = input.value.trim();
-    if(message) {
-        try {
-            const response = await fetch('/api/send-message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>'
-                },
-                body: JSON.stringify({
-                    session_id: form.querySelector('input[name="session_id"]').value,
-                    message: message
-                })
-            });
-            const data = await response.json();
-            if(data.success) {
-                input.value = '';
-                // افزودن پیام به بخش پیام‌ها
-                const chatContainer = document.getElementById('chat-messages');
-                const newMessageDiv = document.createElement('div');
-                newMessageDiv.className = 'flex justify-end mb-2';
-                newMessageDiv.innerHTML = `
-                    <div class="bg-blue-100 p-3 rounded-lg max-w-xs lg:max-w-md">
-                        <p class="text-gray-800">${message}</p>
-                        <p class="text-xs text-gray-500 text-left mt-1">
-                            ${new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'})}
-                            <i class="fas fa-check text-gray-400 ml-1"></i>
-                        </p>
-                    </div>
-                `;
-                chatContainer.appendChild(newMessageDiv);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
+    document.getElementById('chat-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const input = form.querySelector('input[name="message"]');
+        const message = input.value.trim();
+        if(message) {
+            try {
+                const response = await fetch("{{ url('send-message') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        session_id: form.querySelector('input[name="session_id"]').value,
+                        message: message
+                    })
+                });
+                const data = await response.json();
+                if(data.success) {
+                    input.value = '';
+                    // افزودن پیام به بخش پیام‌ها
+                    const chatContainer = document.getElementById('chat-messages');
+                    const newMessageDiv = document.createElement('div');
+                    newMessageDiv.className = 'flex justify-end mb-2';
+                    newMessageDiv.innerHTML = `
+                        <div class="bg-blue-100 p-3 rounded-lg max-w-xs lg:max-w-md">
+                            <p class="text-gray-800">${message}</p>
+                            <p class="text-xs text-gray-500 text-left mt-1">
+                                ${new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'})}
+                                <i class="fas fa-check text-gray-400 ml-1"></i>
+                            </p>
+                        </div>
+                    `;
+                    chatContainer.appendChild(newMessageDiv);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('خطا در ارسال پیام');
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('خطا در ارسال پیام');
         }
-    }
-});
-// اسکرول به پایین هنگام لود صفحه
-window.onload = function() {
-    const chatContainer = document.getElementById('chat-messages');
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-};
+    });
+    // اسکرول به پایین هنگام لود صفحه
+    window.onload = function() {
+        const chatContainer = document.getElementById('chat-messages');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    };
+    
 </script>
 </body>
 </html>

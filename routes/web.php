@@ -54,10 +54,7 @@ Route::middleware('auth')->group(function () {
          ->name('session.end');
 });
 
-Route::middleware(['auth'])->post('/api/send-message', [ChatController::class, 'sendMessage']);
+Route::middleware(['auth'])->post('/send-message', [ChatController::class, 'sendMessage'])->name('send-message');
 
-Route::get('/test-route', function() {
-    return 'Test Route Works!';
-});
 
 require __DIR__.'/auth.php';

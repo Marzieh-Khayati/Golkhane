@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ConsultationSession;
 use App\Models\ChatMessage;
+use Illuminate\Http\Request;
 use Morilog\Jalali\Jalalian;
 use Illuminate\Support\Carbon;
 
@@ -66,15 +67,15 @@ class ChatController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => $message,
-                'html' => view('partials.message', ['message' => $message])->render()
+                'html' => view('partialsMessage', ['message' => $message])->render()
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('SendMessage error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'خطا در ذخیره پیام'
+                'message' => 'خطا در ذخیره پیام: ' . $e->getMessage() // فقط برای تست
             ], 500);
         }
     }
-
 }
