@@ -8,6 +8,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ChatController;
 use App\Models\ConsultationSession;
 use App\Models\User;
+use App\Http\Middleware\CheckUserAccessToSessionsList;
 
 Route::get('/', function () {
     return view('welcome');
@@ -55,6 +56,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->post('/send-message', [ChatController::class, 'sendMessage'])->name('send-message');
+
+Route::get('/{user}/sessions', [ChatController::class, 'index'])->middleware(['auth',CheckUserAccessToSessionsList::class.':{user}'])->name('user.sessions');
 
 
 require __DIR__.'/auth.php';

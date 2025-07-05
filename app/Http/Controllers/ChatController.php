@@ -33,11 +33,11 @@ class ChatController extends Controller
         $session = ConsultationSession::where('id', $sessionId)
             ->where('doctor_id', auth()->id())
             ->firstOrFail();
-            $nowJalali = Jalalian::now();
-            $formattedDate = $nowJalali->format('Y-m-d H:i:s');
+            // $nowJalali = Jalalian::now();
+            // $formattedDate = $nowJalali->format('Y-m-d H:i:s');
         $session->update([
             'status' => 3,
-            'ended_at' => $formattedDate
+            'ended_at' => now()
         ]);
 
         return response()->json([
@@ -77,5 +77,30 @@ class ChatController extends Controller
                 'message' => 'خطا در ذخیره پیام: ' . $e->getMessage() // فقط برای تست
             ], 500);
         }
+    }
+
+    public function index(Request $request, $user)
+    {
+        $status = $request->input('status', 2);
+        $perPage = 10;
+        
+        $query = ConsultationSession::where('customer_id', $user)->orWhere('doctor_id', $user)
+            ->withCount('messages')
+            ->with(['messages' => function($query) {
+                $query->latest()->limit(1);
+            }]);
+            
+        if ($status === 2) {
+            $query->where('status', 2);
+        } elseif ($status === 3) {
+            $query->where('status', 3);
+        }
+        
+        $sessions = $query->latest()->paginate($perPage);
+        
+        return view('user_sessions', [
+            'sessions' => $sessions,
+            'currentStatus' => $status
+        ]);
     }
 }

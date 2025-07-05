@@ -32,7 +32,7 @@ $messages = $messages ?? []; // پیام‌های چت
     <div class="bg-white rounded-lg shadow-md p-6 mb-6">
         <div class="flex items-center justify-between">
             <div class="flex items-center">
-                <img src="{{ $doctor->getProfileUrl() ?? '/images/default-profile.png' }}" alt="پروفایل {{ $doctor->username }}" 
+                <img src="{{ $doctor->getProfileUrl() }}" alt="پروفایل {{ $doctor->username }}" 
                      class="w-16 h-16 rounded-full object-cover border-2 border-emerald-500" />
                 <div class="mr-4">
                     <h2 class="text-xl font-bold text-gray-800">دکتر <?php echo e($doctor->first_name); ?> <?php echo e($doctor->last_name); ?></h2>
@@ -58,7 +58,7 @@ $messages = $messages ?? []; // پیام‌های چت
                 @else
                     <span class="text-red-500">پایان یافته</span>
                     <span class="text-xs text-gray-500">
-                        (در تاریخ {{ Jalalian::fromDateTime($consultationSession->ended_at)->format('Y/m/d H:i') }})
+                        (در تاریخ {{ $consultationSession->ended_at->format('Y/m/d H:i') }})
                     </span>
                 @endif
             </p>

@@ -18,6 +18,11 @@ class ChatMessage extends Model
 
     public function session():BelongsTo
     { 
-        return $this->belongsTo(ConsultationSession::class);
+        return $this->belongsTo(ConsultationSession::class, 'session_id');
+    }
+
+    public function sender()
+    {
+        return $this->belongsTo(User::class, 'sender_id');
     }
 }
