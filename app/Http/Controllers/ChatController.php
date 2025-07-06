@@ -7,18 +7,17 @@ use App\Models\ChatMessage;
 use Illuminate\Http\Request;
 use Morilog\Jalali\Jalalian;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
     /**
      * نمایش صفحه چت
      */
-    public function showChat($sessionId)
+    public function showChat($userId, $sessionId)
     {
+
         $session = ConsultationSession::find($sessionId);
-        if ($session->customer_id !== auth()->id() && $session->doctor_id !== auth()->id()) {
-        abort(403);
-        }
         return view('chat', [
             'consultationSession' => $session,
             'doctor' => $session->doctor,
@@ -49,6 +48,7 @@ class ChatController extends Controller
     /**
      * ارسال پیام جدید
      */
+    // در Controller مربوطه
     public function sendMessage(Request $request)
     {
         $validated = $request->validate([
@@ -100,7 +100,8 @@ class ChatController extends Controller
         
         return view('user_sessions', [
             'sessions' => $sessions,
-            'currentStatus' => $status
+            'currentStatus' => $status,
+            'userId' => $user
         ]);
     }
 }

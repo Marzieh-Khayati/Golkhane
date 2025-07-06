@@ -12,17 +12,17 @@ use Illuminate\Queue\SerializesModels;
 
 class NewMessage
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+   use Dispatchable, InteractsWithSockets;
 
-    class NewMessage implements ShouldBroadcast {
-    public $message;
-    
-    public function __construct(ChatMessage $message) {
-        $this->message = $message;
+    public function __construct(
+        public int $sessionId,
+        public string $message,
+        public int $senderId,
+        public string $createdAt
+    ) {}
+
+    public function broadcastOn(): Channel
+    {
+        return new Channel("chat.{$this->sessionId}");
     }
-    
-    public function broadcastOn() {
-        return new Channel('chat.' . $this->message->session_id);
-    }
-}
 }

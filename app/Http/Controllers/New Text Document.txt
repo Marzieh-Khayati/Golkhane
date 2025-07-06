@@ -1,0 +1,4 @@
+'session_id' => $validated['session_id'],
+                'sender_id' => auth()->id(),
+                'message_text' => $validated['message'],
+                'is_read' => false

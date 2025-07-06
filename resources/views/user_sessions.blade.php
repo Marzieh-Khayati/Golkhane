@@ -55,7 +55,7 @@
                             </div>
                         @endif
                         
-                        <a href="/doctors/{{ $session->id }}/chat" class="btn btn-sm btn-outline-primary mt-3">مشاهده گفتگو</a>
+                        <a href="{{ route('doctor.chat', ['userId' => auth()->id(), 'sessionId' => $session->id]) }}" class="btn btn-sm btn-outline-primary mt-3">مشاهده گفتگو</a>
                     </div>
                 </div>
             @endforeach

@@ -9,10 +9,11 @@ use App\Http\Controllers\ChatController;
 use App\Models\ConsultationSession;
 use App\Models\User;
 use App\Http\Middleware\CheckUserAccessToSessionsList;
+use App\Http\Middleware\CheckUserAccessToChat;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::get('doctors', [UserController::class, 'doctors']);
 
@@ -43,7 +44,7 @@ Route::middleware('auth')->group(function () {
     // پردازش پرداخت
     Route::post('/doctors/{doctor}/process-payment', [PaymentController::class, 'processPayment'])->name('doctor.process-payment');
     // صفحه چت پس از پرداخت
-    Route::get('/doctors/{session}/chat', [ChatController::class, 'showChat'])->name('doctor.chat');
+    Route::get('/{userId}/{sessionId}/chat', [ChatController::class, 'showChat'])->middleware(CheckUserAccessToChat::class.':{userId}'.'{sessionId}')->name('doctor.chat');
 });
 
 // Route برای بررسی لاگین بودن کاربر (از طریق Ajax)
