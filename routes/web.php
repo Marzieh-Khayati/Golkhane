@@ -6,24 +6,18 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\AdminController;
 use App\Models\ConsultationSession;
 use App\Models\User;
 use App\Http\Middleware\CheckUserAccessToSessionsList;
 use App\Http\Middleware\CheckUserAccessToChat;
+use App\Http\Middleware\EnsureUserIsAdmin;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
 Route::get('doctors', [UserController::class, 'doctors']);
-
-// Route::get('doctors/{id}', function($id){ 
-//         $doctor = User::with('doctor_profile')->find($id);
-//          if (! $doctor) {
-//             return abort(404);
-//         }
-//         return $doctor;
-// });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -59,6 +53,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->post('/send-message', [ChatController::class, 'sendMessage'])->name('send-message');
 
 Route::get('/{user}/sessions', [ChatController::class, 'index'])->middleware(['auth',CheckUserAccessToSessionsList::class.':{user}'])->name('user.sessions');
+
+Route::get('/admin-pannel', [AdminController::class, 'index'])->middleware(['auth', EnsureUserIsAdmin::class])->name('admin-pannel');
 
 
 require __DIR__.'/auth.php';

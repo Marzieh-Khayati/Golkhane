@@ -69,9 +69,12 @@ class PaymentController extends Controller
                     'transaction_id' => $transaction->id,
                 ]);
             });
-            
-            return redirect()->route('doctor.chat', $session->id)
-                             ->with('success', 'پرداخت با موفقیت انجام شد!');
+            $userId = $user->id;
+            $sessionId = $session->id;
+            return redirect()->route('doctor.chat', [
+                'userId' => $userId,
+                'sessionId' => $sessionId
+            ])->with('success', 'پرداخت با موفقیت انجام شد!');
             
         } catch (\Exception $e) {
             return back()->withErrors([

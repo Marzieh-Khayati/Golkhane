@@ -58,7 +58,7 @@ $messages = $messages ?? []; // پیام‌های چت
                 @else
                     <span class="text-red-500">پایان یافته</span>
                     <span class="text-xs text-gray-500">
-                        (در تاریخ {{ $consultationSession->ended_at->format('Y/m/d H:i') }})
+                        (در تاریخ {{ $consultationSession->ended_at }})
                     </span>
                 @endif
             </p>
@@ -143,21 +143,10 @@ document.getElementById('end-session-btn')?.addEventListener('click', async func
     <div class="flex justify-between items-center">
         <div>
             <h3 class="font-bold text-gray-800">مشاوره آنلاین</h3>
-            <p class="text-gray-600">
-                مدت زمان باقیمانده: 
-                <?php
-                    $remaining = strtotime($consultationSession->end_time) - time();
-                    $minutes = floor($remaining / 60);
-                    echo $minutes > 0 ? $minutes . ' دقیقه' : 'زمان به پایان رسیده';
-                ?>
-            </p>
             <p class="text-gray-600 mt-1">
                 مبلغ پرداختی: <?php echo e(number_format($consultationSession->payment_amount)); ?> تومان
             </p>
         </div>
-        <button class="bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-lg">
-            پایان مشاوره
-        </button>
     </div>
 </div>
 

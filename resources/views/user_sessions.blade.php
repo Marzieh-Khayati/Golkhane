@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>جلسات مشاوره من</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { padding: 20px; background-color: #f8f9fa; }
         .session-card { margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
@@ -15,18 +16,46 @@
         .tab-link.active { color: #0d6efd; font-weight: bold; }
     </style>
 </head>
-<body>
+<body class="font-sans bg-emerald-50">
+    <!--header-->
+    <header class="bg-emerald-800 text-white p-4 shadow">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold">گلخانه</div>
+            @auth
+                <?php $username = auth()->user()->username;?>
+                <div class="text-2xl font-bold"><a href="{{route('dashboard')}}">{{$username}}</a></div>
+            @endauth
+            <nav class="hidden md:flex space-x-8 space-x-reverse">
+                <a href="{{route('welcome')}}" class="hover:text-emerald-200">خانه</a>
+                <a href="/doctors" class="hover:text-emerald-200">متخصصان</a>
+                @auth
+                    <a href="{{ route('user.sessions', ['user' => auth()->id()]) }}" class="hover:text-emerald-200">گفت‌وگو های من</a>
+                    <?php $usertype = auth()->user()->user_type;?>
+                    @if($usertype == 'admin')
+                        <a href="{{route('admin-pannel')}}" class="hover:text-emerald-200">پنل ادمین</a>
+                    @endif
+                @endauth
+                <a href="#" class="hover:text-emerald-200">درباره ما</a>
+                <a href="/register" class="bg-emerald-600 px-4 py-2 rounded hover:bg-emerald-700">ورود/ثبت‌نام</a>
+            </nav>
+        </div>
+    </header>
+
     <div class="container">
         <h1 class="mb-4">جلسات مشاوره من</h1>
         
         <div class="mb-4">
-            <a href="?status=active" class="tab-link {{ $currentStatus === 'active' ? 'active' : '' }}">جلسات فعال</a>
-            <a href="?status=completed" class="tab-link {{ $currentStatus === 'completed' ? 'active' : '' }}">جلسات تکمیل شده</a>
+            <a href="?status=active" class="tab-link {{ request('status', 'active') === 'active' ? 'active' : '' }}">جلسات فعال</a>
+            <a href="?status=completed" class="tab-link {{ request('status') === 'completed' ? 'active' : '' }}">جلسات تکمیل شده</a>
         </div>
         
         @if($sessions->isEmpty())
             <div class="alert alert-info">
-                هیچ جلسه‌ای با وضعیت "{{ $currentStatus === 'active' ? 'فعال' : 'تکمیل شده' }}" یافت نشد.
+                @if(request('status', 'active') === 'active')
+                    هیچ جلسه فعالی یافت نشد.
+                @else
+                    هیچ جلسه تکمیل شده‌ای یافت نشد.
+                @endif
             </div>
         @else
             @foreach($sessions as $session)
@@ -42,7 +71,7 @@
                         <p class="card-text text-muted small mb-2">
                             <span>تاریخ ایجاد: {{ $session->created_at->format('Y/m/d H:i') }}</span>
                             <span class="mx-2">|</span>
-                            <span>تعداد پیام‌ها: {{ $session->chat_messages_count }}</span>
+                            <span>تعداد پیام‌ها: {{ $session->messages_count }}</span>
                         </p>
                         
                         @if($session->messages->isNotEmpty())
@@ -59,10 +88,6 @@
                     </div>
                 </div>
             @endforeach
-            
-            <div class="mt-4">
-                {{ $sessions->appends(['status' => $currentStatus])->links() }}
-            </div>
         @endif
     </div>
     

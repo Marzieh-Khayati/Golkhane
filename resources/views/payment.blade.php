@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>پرداخت هزینه مشاوره</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             background-color: #f8f9fa;
@@ -15,7 +16,30 @@
         }
     </style>
 </head>
-<body>
+<body class="font-sans bg-emerald-50">
+    <!--header-->
+    <header class="bg-emerald-800 text-white p-4 shadow">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold">گلخانه</div>
+            @auth
+                <?php $username = auth()->user()->username;?>
+                <div class="text-2xl font-bold">{{$username}}</div>
+            @endauth
+            <nav class="hidden md:flex space-x-8 space-x-reverse">
+                <a href="{{route('welcome')}}" class="hover:text-emerald-200">خانه</a>
+                <a href="/doctors" class="hover:text-emerald-200">متخصصان</a>
+                @auth
+                    <a href="{{ route('user.sessions', ['user' => auth()->id()]) }}" class="hover:text-emerald-200">گفت‌وگو های من</a>
+                    <?php $usertype = auth()->user()->user_type;?>
+                    @if($usertype == 'admin')
+                        <a href="{{route('admin-pannel')}}" class="hover:text-emerald-200">پنل ادمین</a>
+                    @endif
+                @endauth
+                <a href="#" class="hover:text-emerald-200">درباره ما</a>
+                <a href="/register" class="bg-emerald-600 px-4 py-2 rounded hover:bg-emerald-700">ورود/ثبت‌نام</a>
+            </nav>
+        </div>
+    </header>
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -44,7 +68,6 @@
                         @if(auth()->user()->credit < $doctor->doctor_profile->consultation_fee)
                             <div class="alert alert-warning">
                                 موجودی کیف پول شما کافی نیست. لطفاً حساب خود را شارژ کنید.
-                                 <a href="#" class="btn btn-sm btn-outline-primary mr-2">شارژ کیف پول</a> 
                             </div>
                         @else
                             <form action="{{ route('doctor.process-payment', $doctor->id) }}" method="POST">

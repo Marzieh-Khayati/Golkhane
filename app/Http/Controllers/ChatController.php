@@ -32,16 +32,20 @@ class ChatController extends Controller
         $session = ConsultationSession::where('id', $sessionId)
             ->where('doctor_id', auth()->id())
             ->firstOrFail();
-            // $nowJalali = Jalalian::now();
-            // $formattedDate = $nowJalali->format('Y-m-d H:i:s');
-        $session->update([
-            'status' => 3,
-            'ended_at' => now()
-        ]);
+
+        $updateData = [
+            'status' => 'completed', // یا 3 اگر عددی است
+            'ended_at' => Carbon::now()->toDateTimeString() // یا now()
+        ];
+
+        $session->update($updateData);
 
         return response()->json([
-            'success' => true,
-            'message' => 'جلسه با موفقیت به پایان رسید'
+            'success' => $session->wasChanged(),
+            'message' => $session->wasChanged() 
+                ? 'جلسه با موفقیت به پایان رسید' 
+                : 'تغییری در وضعیت جلسه ایجاد نشد',
+            'ended_at' => $session->ended_at
         ]);
     }
 
@@ -81,22 +85,29 @@ class ChatController extends Controller
 
     public function index(Request $request, $user)
     {
-        $status = $request->input('status', 2);
+        $status = $request->input('status', 'active');
         $perPage = 10;
         
-        $query = ConsultationSession::where('customer_id', $user)->orWhere('doctor_id', $user)
-            ->withCount('messages')
-            ->with(['messages' => function($query) {
-                $query->latest()->limit(1);
-            }]);
-            
-        if ($status === 2) {
-            $query->where('status', 2);
-        } elseif ($status === 3) {
-            $query->where('status', 3);
+        $query = ConsultationSession::where(function($q) use ($user) {
+            $q->where('customer_id', $user)
+            ->orWhere('doctor_id', $user);
+        })
+        ->withCount('messages')
+        ->with(['messages' => function($query) {
+            $query->latest()->limit(1);
+        }]);
+        
+        // فیلتر وضعیت با منطق بهینه‌تر
+        $validStatuses = ['active', 'completed'];
+        if (in_array($status, $validStatuses)) {
+            $query->where('status', $status);
+        } else {
+            // حالت پیش‌فرض اگر وضعیت نامعتبر بود
+            $query->where('status', 'active');
+            $status = 'active';
         }
         
-        $sessions = $query->latest()->paginate($perPage);
+        $sessions = $query->latest()->get();
         
         return view('user_sessions', [
             'sessions' => $sessions,

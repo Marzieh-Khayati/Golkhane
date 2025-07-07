@@ -11,12 +11,19 @@
     <header class="bg-emerald-800 text-white p-4 shadow">
         <div class="container mx-auto flex justify-between items-center">
             <div class="text-2xl font-bold">گلخانه</div>
+            @auth
+                <?php $username = auth()->user()->username;?>
+                <div class="text-2xl font-bold"><a href="{{route('dashboard')}}">{{$username}}</a></div>
+            @endauth
             <nav class="hidden md:flex space-x-8 space-x-reverse">
                 <a href="#" class="hover:text-emerald-200">خانه</a>
                 <a href="/doctors" class="hover:text-emerald-200">متخصصان</a>
                 @auth
-                    <?php $userId = auth()->id();?>
                     <a href="{{ route('user.sessions', ['user' => auth()->id()]) }}" class="hover:text-emerald-200">گفت‌وگو های من</a>
+                    <?php $usertype = auth()->user()->user_type;?>
+                    @if($usertype == 'admin')
+                        <a href="{{route('admin-pannel')}}" class="hover:text-emerald-200">پنل ادمین</a>
+                    @endif
                 @endauth
                 <a href="#" class="hover:text-emerald-200">درباره ما</a>
                 <a href="/register" class="bg-emerald-600 px-4 py-2 rounded hover:bg-emerald-700">ورود/ثبت‌نام</a>

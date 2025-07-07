@@ -8,6 +8,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="font-sans bg-emerald-50">
+    <!--header-->
+    <header class="bg-emerald-800 text-white p-4 shadow">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-2xl font-bold">گلخانه</div>
+            @auth
+                <?php $username = auth()->user()->username;?>
+                <div class="text-2xl font-bold">{{$username}}</div>
+            @endauth
+            <nav class="hidden md:flex space-x-8 space-x-reverse">
+                <a href="{{route('welcome')}}" class="hover:text-emerald-200">خانه</a>
+                <a href="/doctors" class="hover:text-emerald-200">متخصصان</a>
+                @auth
+                    <a href="{{ route('user.sessions', ['user' => auth()->id()]) }}" class="hover:text-emerald-200">گفت‌وگو های من</a>
+                    <?php $usertype = auth()->user()->user_type;?>
+                    @if($usertype == 'admin')
+                        <a href="{{route('admin-pannel')}}" class="hover:text-emerald-200">پنل ادمین</a>
+                    @endif
+                @endauth
+                <a href="#" class="hover:text-emerald-200">درباره ما</a>
+                <a href="/register" class="bg-emerald-600 px-4 py-2 rounded hover:bg-emerald-700">ورود/ثبت‌نام</a>
+            </nav>
+        </div>
+    </header>
     <section class="py-16 bg-gray-50">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-center mb-12 text-emerald-800">گیاهپزشکان ما</h2>

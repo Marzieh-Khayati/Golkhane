@@ -16,7 +16,7 @@ class ConsultationSession extends Model
         'customer_id',
         'doctor_id',
         'start_time',
-        'end_tyme',
+        'ended_at',
         'status',
         'payment_amount',
         'payment_status',
